@@ -1,0 +1,59 @@
+MGN Installation steps
+----------------------
+
+Establish connection with Datacenter and AWS
+================================================
+On-premise data centers may not have public internet connectivity need to establish connectivity between AWS and data center using AWS Direct connect or AWS Site-to-Site VPN.
+
+Creating AWS endpoints
+=======================
+For establishing connection from MGN agent installed on on-premise servers to AWS we need to create s3 and MGN endpoint (interface endpoint)
+
+  -MGN endpoint - inteface endpoint
+  -Secuirty Group - 1500,445 (best practice is to give on-prem ip ranges for these ports)
+
+Installating MGN in on-premise server
+====================================
+Make sure aws cli is installed on-premise server so that the migrated server will have AWS CLI installed. 
+
+For Windows make sure local admin user is created so that when launching test instance and cutover instance can login and test before connecting to AD.
+
+Navigate to AWs MGN console and check the replication template for MGN instance subnet select the appropriate subnet for replication instance and instance type <select the appropriate instance type> and make sure secuirty group is attached to replication instance . 
+And Data routing and throttling  Info is selected as Use private ip  for data replication (VPN, DirectConnect, VPC peering, etc.)
+
+MGN agent installation(Linux and Windows)
+Run the below in windows on prem server:
+AwsReplicationWindowsInstaller.exe --region <region> --aws-access-key-id  ******* --aws-secret-access-key ********** --aws-session-token ********* --no-prompt --s3-endpoint vpce-*****-vpce.amazonaws.com --endpoint vpce-******.vpce.amazonaws.com
+
+Run the below in Linux on prem server:
+
+sudo chmod +x aws-replication-installer-init; sudo ./aws-replication-installer-init --region <region> --aws-access-key-id ******** --aws-secret-access-key ******** --aws-session-token ******* --no-prompt --s3-endpoint vpce-*****.vpce.amazonaws.com --endpoint vpce****.vpce.amazonaws.com
+
+Once the above commands are executed in on-premise the servers, the servers will get added to source servers in MGN console. 
+
+And the status will be in stalled for few minutes and will move to ready for testing . 
+
+    In Lunch settings make sure Instance type right sizing is off and keep rest all default. 
+
+    click on the EC2 launch template and update the instance type and subnet based on the requirement and create key pair and select a SG that have only access to 1500 anf 443 (No all traffic- otherwise it will get connected to AD in case of windows) 
+
+    Once the launch template is created --select the template --> Actions --> Set default version and select the latest version.
+
+Cutover Instance:
+==================
+On the day of cutover or two days before we can click on Launch test instance and test the instance using local admin. (If we are launching the test instance 2days before after testing is succesful revert back to Ready for testing so that it will be in sync). 
+
+On the day of cutover --> Launch test instace (test local admin ) after that  select Mark as Ready for cutover (at this time the test instance will be terminated) --> Launch cutover instance (where the actual instance will be launch) 
+
+For Windows server use a blocked security group that will allow only 443,1500 and RDP to all traffic(or specific ip range for RDP) otherwise it will get joined to AD. 
+
+Once it is done update the instance with new secuirty group with autual application ports.
+
+
+
+
+
+
+
+
+
