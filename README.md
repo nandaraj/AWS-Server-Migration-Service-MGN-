@@ -1,4 +1,5 @@
-# AWS-Server-Migration-Service-MGN-
+# AWS-Server-Migration-Service-MGN
+Note: This refernce documentation is for intermediate or professionals who have experince in MGN.
 AWS server migration service (MGN) agent installation and cutover steps for migrating on-premise servers(Linux and Windows) to AWS Cloud.
 This document contains steps:
   1: Installating MGN agents in on-premise servers
